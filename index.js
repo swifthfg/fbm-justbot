@@ -2,6 +2,7 @@ var express = require('express')
 var bodyParser = require('body-parser')
 var request = require('request')
 var app = express()
+require('dotenv').config()
 
 app.set('port', (process.env.PORT || 5000))
 
@@ -54,7 +55,7 @@ app.post('/webhook/', function (req, res) {
 	res.sendStatus(200)
 })
 
-var token = " enter token here"
+var token = process.env.PAGE_TOKEN
 
 // function to echo back messages
 
