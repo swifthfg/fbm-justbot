@@ -93,7 +93,6 @@ function doesItExistInArray(haystack, arr) {
 	})
 }
 
-// + '/?fields=name,birthday&access_token=' + process.env.TOKEN
 function getSenderName(senderId) {
 	var options = {
 		url: constants.graphURL + senderId,
