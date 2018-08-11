@@ -24,7 +24,6 @@ app.post('/webhook', (req, res) => {
 			let mEvent = messagingEvents[i]
 			let sender = mEvent.sender.id
 			getSenderName(sender).then(function(response) {
-				console.log('sender name api response: ' + response.name)
 				if (mEvent.message && mEvent.message.text) {
 					let text = mEvent.message.text
 					if (doesItExistInArray(constants.hiWordsTR_customer, text.split())) {
