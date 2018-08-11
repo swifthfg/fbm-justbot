@@ -1,9 +1,9 @@
 const
 	constants = require("./constants");
 	request = require('request'),
+	rp = require('request-promise')
 	express = require('express'),
 	body_parser = require('body-parser'),
-	rp = require('request-promise')
 	app = express().use(body_parser.json());
 	require('dotenv').config()
 
@@ -30,7 +30,11 @@ app.post('/webhook', (req, res) => {
 						sendText(sender, "Merhaba " + response.name + ", nasıl yardımcı olabilirim?")
 					} else {
 						sendText(sender, "Nasıl gidiyor hayat?")
+						sendPostbackMessage(sender, null)
 					}
+				}
+				else if (mEvent.postback) {
+					sendText(sender, "Postbacklediniz!")
 				}
 			})
 			.catch(function(error) {
@@ -45,8 +49,42 @@ app.post('/webhook', (req, res) => {
 	}
 });
 
+function sendPostbackMessage(sender, messageData=null) {
+	if (messageData) {
+		// TODO directly send messageData as message
+	} else {
+		var genericMessageData = {
+			'attachment': {
+				'type': 'template',
+				'payload': {
+					'template_type': 'generic',
+					'elements': [{
+						'title': 'Nasıl yardımcı olabilirim?',
+						'subtitle': 'Size sağlayabileceğim hizmetlere göz atın.',
+						'image_url': 'https://pbs.twimg.com/profile_images/830523441660968960/YozH1XXi_400x400.jpg',
+						'buttons': [{
+							'type': 'postback',
+							'title': 'Justbot hakkında bilgi alabilir miyim?',
+							'payload': 'İnsan değilim. İnsanlarla konuşmayı ve bilgi alışverişinde bulunmayı severim.',
+						}, {
+							'type': 'postback',
+							'title': 'Hizmet verdiğiniz lokasyonları öğrenebilir miyim?',
+							'payload': 'Biz her yerde hizmet vermekteyiz',
+						}]
+					}]
+				}
+			}
+		}
+		sendMessage(sender, genericMessageData)
+	}
+}
+
 function sendText(sender, textMessage) {
 	let messageData = {text: textMessage}
+	sendMessage(sender, messageData)
+}
+
+function sendMessage(sender, messageData) {
 	let recipientData = {id: sender}
 	request({
 		url: "https://graph.facebook.com/v2.6/me/messages",
