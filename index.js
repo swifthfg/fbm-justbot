@@ -22,45 +22,29 @@ app.post('/webhook', (req, res) => {
 			}
 		}
 		res.sendStatus(200)
-
-
-		/*
-		// Iterate over each entry - there may be multiple if batched
-		body.entry.forEach(function(entry) {
-
-			// Get the webhook event. entry.messaging is an array, but
-			// will only ever contain one event, so we get index 0
-			let webhook_event = entry.messaging[0];
-			console.log(webhook_event);
-		});
-
-		// Return a '200 OK' response to all events
-		res.status(200).send('EVENT_RECEIVED');
-		*/
-
-
 	} else {
 		res.sendStatus(404);
 	}
-
 });
 
 function sendText(sender, textMessage) {
 	let messageData = {text: textMessage}
-	let receiptData = {id: sender}
+	let recipientData = {id: sender}
 	request({
 		url: "https://graph.facebook.com/v2.6/me/messages",
 		qs: {access_token: process.env.TOKEN},
 		method: "POST",
 		json: {
-			receipt: receiptData,
+			recipient: recipientData,
 			message: messageData
 		}
 	}, function(error, response, body) {
 		if (error) {
 			console.log("error occured");
+			console.error(error);
 		} else if (response.body.error) {
 			console.log("response body error occured");
+			console.error(response.body.error);
 		}
 
 	})
