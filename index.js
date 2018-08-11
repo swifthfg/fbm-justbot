@@ -1,4 +1,5 @@
 const
+	constants = require("./constants");
 	request = require('request'),
 	express = require('express'),
 	body_parser = require('body-parser'),
@@ -7,6 +8,11 @@ const
 
 app.listen(process.env.PORT || 1337, () => console.log('Webhook is up'));
 
+app.get('/', function (req, res) {
+	res.send('Welcome to JUSTBOT')
+})
+
+// Receives message and respond with proper text or postback options
 app.post('/webhook', (req, res) => {
 	let body = req.body;
 
@@ -14,16 +20,23 @@ app.post('/webhook', (req, res) => {
 	if (body.object === 'page') {
 		let messagingEvents = req.body.entry[0].messaging
 		for (let i = 0; i < messagingEvents.length; i++) {
-			let mEvent = messagingEvents[0]
+			let mEvent = messagingEvents[i]
 			let sender = mEvent.sender.id
+
+			console.log("sender: " + sender);
+
 			if (mEvent.message && mEvent.message.text) {
 				let text = mEvent.message.text
-				sendText(sender, "Echo: " + text)
+				if (doesItExistInArray(constants.hiWordsTR_customer, text.split())) {
+					sendText(sender, "Merhaba Faruk, nasıl yardımcı olabilirim?")
+				} else {
+					sendText(sender, "Nasıl gidiyor hayat?")
+				}
 			}
 		}
 		res.sendStatus(200)
 	} else {
-		res.sendStatus(404);
+		res.sendStatus(404)
 	}
 });
 
@@ -46,7 +59,6 @@ function sendText(sender, textMessage) {
 			console.log("response body error occured");
 			console.error(response.body.error);
 		}
-
 	})
 }
 
@@ -66,3 +78,12 @@ app.get('/webhook', (req, res) => {
 		}
 	}
 });
+
+
+/* ############################################################ UTILS ############################################################ */
+
+function doesItExistInArray(haystack, arr) {
+	return arr.some(function (v) {
+		return haystack.indexOf(v) >= 0;
+	});
+};
