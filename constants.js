@@ -35,3 +35,5 @@ define('thankWordsTR_customer', [
 define('hiWordsTR_bot', [
 	'Merhaba',
 ])
+
+define('graphURL', 'https://graph.facebook.com/v2.11/')

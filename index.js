@@ -3,6 +3,7 @@ const
 	request = require('request'),
 	express = require('express'),
 	body_parser = require('body-parser'),
+	rp = require('request-promise')
 	app = express().use(body_parser.json());
 	require('dotenv').config()
 
@@ -22,17 +23,22 @@ app.post('/webhook', (req, res) => {
 		for (let i = 0; i < messagingEvents.length; i++) {
 			let mEvent = messagingEvents[i]
 			let sender = mEvent.sender.id
-
-			console.log("sender: " + sender);
-
-			if (mEvent.message && mEvent.message.text) {
-				let text = mEvent.message.text
-				if (doesItExistInArray(constants.hiWordsTR_customer, text.split())) {
-					sendText(sender, "Merhaba Faruk, nasıl yardımcı olabilirim?")
-				} else {
-					sendText(sender, "Nasıl gidiyor hayat?")
+			getSenderName(sender).then(function(response) {
+				console.log('sender name api response: ' + response)
+				if (mEvent.message && mEvent.message.text) {
+					let text = mEvent.message.text
+					if (doesItExistInArray(constants.hiWordsTR_customer, text.split())) {
+						sendText(sender, "Merhaba " + response.name + ", nasıl yardımcı olabilirim?")
+					} else {
+						sendText(sender, "Nasıl gidiyor hayat?")
+					}
 				}
-			}
+			})
+			.catch(function(error) {
+				console.log('error occured while fetching user name')
+				console.error(error)
+				res.sendStatus(422)
+			})
 		}
 		res.sendStatus(200)
 	} else {
@@ -85,5 +91,15 @@ app.get('/webhook', (req, res) => {
 function doesItExistInArray(haystack, arr) {
 	return arr.some(function (v) {
 		return haystack.indexOf(v) >= 0;
-	});
-};
+	})
+}
+
+// + '/?fields=name,birthday&access_token=' + process.env.TOKEN
+function getSenderName(senderId) {
+	var options = {
+		url: constants.graphURL + senderId,
+		qs: {fields: 'name,birthday', access_token: process.env.TOKEN},
+		method: "GET"
+	}
+	return rp(options)
+}
