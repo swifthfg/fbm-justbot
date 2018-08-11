@@ -99,7 +99,8 @@ function getSenderName(senderId) {
 	var options = {
 		url: constants.graphURL + senderId,
 		qs: {fields: 'name,birthday', access_token: process.env.TOKEN},
-		method: "GET"
+		method: "GET",
+		json: true
 	}
 	return rp(options)
 }
