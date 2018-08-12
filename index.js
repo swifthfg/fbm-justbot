@@ -48,6 +48,27 @@ app.post('/webhook', (req, res) => {
 	}
 })
 
+app.get('/webhook', (req, res) => {
+	const VERIFY_TOKEN = process.env.TOKEN
+
+	let mode = req.query['hub.mode']
+	let token = req.query['hub.verify_token']
+	let challenge = req.query['hub.challenge']
+
+	if (mode && token) {
+		if (mode === 'subscribe' && token === VERIFY_TOKEN) {
+			console.log('WEBHOOK_VERIFIED')
+			res.status(200).send(challenge)
+		} else {
+			res.sendStatus(403)
+		}
+	}
+})
+
+
+/* ############################################################ UTILS ############################################################ */
+
+
 function sendPostbackMessage(sender, messageData=null) {
 	if (messageData) {
 		sendMessage(sender, messageData)
@@ -103,27 +124,6 @@ function sendMessage(sender, messageData) {
 		}
 	})
 }
-
-app.get('/webhook', (req, res) => {
-	const VERIFY_TOKEN = process.env.TOKEN
-
-	let mode = req.query['hub.mode']
-	let token = req.query['hub.verify_token']
-	let challenge = req.query['hub.challenge']
-
-	if (mode && token) {
-		if (mode === 'subscribe' && token === VERIFY_TOKEN) {
-			console.log('WEBHOOK_VERIFIED')
-			res.status(200).send(challenge)
-		} else {
-			res.sendStatus(403)
-		}
-	}
-})
-
-
-/* ############################################################ UTILS ############################################################ */
-
 
 function doesItExistInArray(haystack, arr) {
 	return arr.some(function (v) {
