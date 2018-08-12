@@ -13,7 +13,7 @@ app.get('/', function (req, res) {
 	res.send('Welcome to JUSTBOT')
 })
 
-// Receives message and respond with proper text or postback options
+// Receives message and responds with proper text or postback options
 app.post('/webhook', (req, res) => {
 	let body = req.body
 
