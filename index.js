@@ -1,13 +1,13 @@
 const
-	constants = require("./constants");
+	constants = require("./constants")
 	request = require('request'),
 	rp = require('request-promise')
 	express = require('express'),
 	body_parser = require('body-parser'),
-	app = express().use(body_parser.json());
+	app = express().use(body_parser.json())
 	require('dotenv').config()
 
-app.listen(process.env.PORT || 1337, () => console.log('Webhook is up'));
+app.listen(process.env.PORT || 1337, () => console.log('Webhook is up'))
 
 app.get('/', function (req, res) {
 	res.send('Welcome to JUSTBOT')
@@ -15,9 +15,8 @@ app.get('/', function (req, res) {
 
 // Receives message and respond with proper text or postback options
 app.post('/webhook', (req, res) => {
-	let body = req.body;
+	let body = req.body
 
-	// Check the webhook event is from a Page subscription
 	if (body.object === 'page') {
 		let messagingEvents = req.body.entry[0].messaging
 		for (let i = 0; i < messagingEvents.length; i++) {
@@ -27,14 +26,14 @@ app.post('/webhook', (req, res) => {
 				if (mEvent.message && mEvent.message.text) {
 					let text = mEvent.message.text
 					if (doesItExistInArray(constants.hiWordsTR_customer, text.split())) {
-						sendText(sender, "Merhaba " + response.name + ", nasıl yardımcı olabilirim?")
+						sendText(sender, "Hello " + response.name + ", how can I help you?")
 					} else {
-						sendText(sender, "Nasıl gidiyor hayat?")
+						sendText(sender, "What's up?")
 						sendPostbackMessage(sender, null)
 					}
 				}
 				else if (mEvent.postback) {
-					sendText(sender, "Postbacklediniz!")
+					sendText(sender, "You have postbacked!")
 				}
 			})
 			.catch(function(error) {
@@ -47,11 +46,11 @@ app.post('/webhook', (req, res) => {
 	} else {
 		res.sendStatus(404)
 	}
-});
+})
 
 function sendPostbackMessage(sender, messageData=null) {
 	if (messageData) {
-		// TODO directly send messageData as message
+		sendMessage(sender, messageData)
 	} else {
 		var genericMessageData = {
 			'attachment': {
@@ -64,12 +63,12 @@ function sendPostbackMessage(sender, messageData=null) {
 						'image_url': 'https://pbs.twimg.com/profile_images/830523441660968960/YozH1XXi_400x400.jpg',
 						'buttons': [{
 							'type': 'postback',
-							'title': 'Justbot hakkında bilgi alabilir miyim?',
-							'payload': 'İnsan değilim. İnsanlarla konuşmayı ve bilgi alışverişinde bulunmayı severim.',
+							'title': 'Who am I?',
+							'payload': 'identityinfo',
 						}, {
 							'type': 'postback',
-							'title': 'Hizmet verdiğiniz lokasyonları öğrenebilir miyim?',
-							'payload': 'Biz her yerde hizmet vermekteyiz',
+							'title': 'Amuse me',
+							'payload': 'amusement',
 						}]
 					}]
 				}
@@ -96,38 +95,39 @@ function sendMessage(sender, messageData) {
 		}
 	}, function(error, response, body) {
 		if (error) {
-			console.log("error occured");
-			console.error(error);
+			console.log("error occured")
+			console.error(error)
 		} else if (response.body.error) {
-			console.log("response body error occured");
-			console.error(response.body.error);
+			console.log("response body error occured")
+			console.error(response.body.error)
 		}
 	})
 }
 
 app.get('/webhook', (req, res) => {
-	const VERIFY_TOKEN = process.env.TOKEN;
+	const VERIFY_TOKEN = process.env.TOKEN
 
-	let mode = req.query['hub.mode'];
-	let token = req.query['hub.verify_token'];
-	let challenge = req.query['hub.challenge'];
+	let mode = req.query['hub.mode']
+	let token = req.query['hub.verify_token']
+	let challenge = req.query['hub.challenge']
 
 	if (mode && token) {
 		if (mode === 'subscribe' && token === VERIFY_TOKEN) {
-			console.log('WEBHOOK_VERIFIED');
-			res.status(200).send(challenge);
+			console.log('WEBHOOK_VERIFIED')
+			res.status(200).send(challenge)
 		} else {
-			res.sendStatus(403);
+			res.sendStatus(403)
 		}
 	}
-});
+})
 
 
 /* ############################################################ UTILS ############################################################ */
 
+
 function doesItExistInArray(haystack, arr) {
 	return arr.some(function (v) {
-		return haystack.indexOf(v) >= 0;
+		return haystack.indexOf(v) >= 0
 	})
 }
 

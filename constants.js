@@ -2,7 +2,7 @@ function define(name, value) {
 	Object.defineProperty(exports, name, {
 		value:      value,
 		enumerable: true
-	});
+	})
 }
 
 define('hiWordsTR_customer', [
@@ -13,7 +13,7 @@ define('hiWordsTR_customer', [
 	'selam',
 	'selamlar',
 	'günaydın'
-]);
+])
 
 define('farewellWordsTR_customer', [
 	'görüşürüz',
@@ -34,6 +34,40 @@ define('thankWordsTR_customer', [
 
 define('hiWordsTR_bot', [
 	'Merhaba',
+])
+
+define('hiWordsEN_customer', [
+	'Hi',
+	'Hello',
+	'Halo',
+	'Hola',
+	'Good morning',
+])
+
+define('farewellWordsEN_customer', [
+	'good bye',
+	'bb',
+	'bye',
+	'see u',
+	'see you',
+	'c u',
+	'cu',
+	'c you',
+	'bye bye'
+])
+
+define('thankWordsEN_customer', [
+	'thank you',
+	'thanks',
+	'it helped',
+	'this helped',
+	'you helped',
+	'helped'
+])
+
+define('hiWordsEN_bot', [
+	'Hi',
+	'Hello'
 ])
 
 define('graphURL', 'https://graph.facebook.com/v2.11/')
